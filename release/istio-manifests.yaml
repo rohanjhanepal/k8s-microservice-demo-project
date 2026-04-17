@@ -22,6 +22,7 @@ apiVersion: gateway.networking.k8s.io/v1beta1
 kind: Gateway
 metadata:
   name: istio-gateway
+  namespace: online-boutique
 spec:
   gatewayClassName: istio
   listeners:
@@ -36,6 +37,7 @@ apiVersion: gateway.networking.k8s.io/v1beta1
 kind: HTTPRoute
 metadata:
   name: frontend-route
+  namespace: online-boutique
 spec:
   parentRefs:
   - name: istio-gateway
@@ -51,6 +53,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
 metadata:
   name: allow-egress-googleapis
+  namespace: online-boutique
 spec:
   hosts:
   - "accounts.google.com" # Used to get token
@@ -67,6 +70,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
 metadata:
   name: allow-egress-google-metadata
+  namespace: online-boutique
 spec:
   hosts:
   - metadata.google.internal
@@ -84,9 +88,10 @@ apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: frontend
+  namespace: online-boutique
 spec:
   hosts:
-  - "frontend.default.svc.cluster.local"
+  - "frontend.online-boutique.svc.cluster.local"
   http:
   - route:
     - destination:
