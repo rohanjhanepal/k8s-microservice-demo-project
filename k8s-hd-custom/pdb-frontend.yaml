@@ -1,0 +1,12 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  # Frontend runs multiple replicas; keep at least 2 serving during voluntary disruptions.
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: frontend

@@ -1,0 +1,50 @@
+# HD customizations for SIT727 (keeps upstream manifests intact).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: online-boutique
+
+resources:
+  # Namespace must exist before namespaced PVC
+  - namespace.yaml
+
+  # Storage for redis-cart (PV cluster-wide; PVC in online-boutique)
+  - storage/redis-pv-pvc.yaml
+
+  # Base app resources (copied + modified)
+  - adservice.yaml
+  - cartservice.yaml
+  - checkoutservice.yaml
+  - currencyservice.yaml
+  - emailservice.yaml
+  - frontend.yaml
+  - loadgenerator.yaml
+  - paymentservice.yaml
+  - productcatalogservice.yaml
+  - recommendationservice.yaml
+  - shippingservice.yaml
+
+  # HD-level additions
+  - configmap-hd-config.yaml
+  - secret-payment-demo.yaml
+
+  - hpa-frontend.yaml
+  - hpa-checkoutservice.yaml
+  - hpa-recommendationservice.yaml
+
+  - pdb-frontend.yaml
+  - pdb-checkoutservice.yaml
+
+  - networkpolicy/frontend-ingress.yaml
+  - networkpolicy/checkoutservice-ingress.yaml
+  - networkpolicy/cartservice-ingress.yaml
+  - networkpolicy/currencyservice-ingress.yaml
+  - networkpolicy/productcatalogservice-ingress.yaml
+  - networkpolicy/recommendationservice-ingress.yaml
+  - networkpolicy/shippingservice-ingress.yaml
+  - networkpolicy/emailservice-ingress.yaml
+  - networkpolicy/paymentservice-ingress.yaml
+  - networkpolicy/adservice-ingress.yaml
+  - networkpolicy/redis-cart-ingress.yaml
+
+  # HTTP Ingress (requires ingress-nginx or compatible controller; see ingress/README-ingress.md)
+  - ingress/frontend-ingress.yaml

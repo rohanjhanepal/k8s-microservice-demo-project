@@ -1,0 +1,33 @@
+# Redis cart persistence (local Docker Desktop demo).
+# hostPath is for demonstration only—production should use cloud/managed storage or a managed Redis.
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: redis-cart-pv
+  labels:
+    app.kubernetes.io/part-of: online-boutique
+    app.kubernetes.io/component: redis-cart
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    # Path inside the Docker Desktop Kubernetes VM (not your Windows C: drive directly).
+    path: /tmp/online-boutique-redis-data
+    type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-cart-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: manual
+  resources:
+    requests:
+      storage: 1Gi

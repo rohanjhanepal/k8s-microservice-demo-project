@@ -1,0 +1,57 @@
+# =============================================================================
+# EXAMPLE ONLY — DO NOT APPLY unless Prometheus Operator is installed and the
+# PrometheusRule CRD exists: prometheusrules.monitoring.coreos.com
+#
+# Verify: kubectl get crd prometheusrules.monitoring.coreos.com
+# These expressions assume kube-state-metrics / typical kube-prometheus metrics.
+# =============================================================================
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: online-boutique-alerts-example
+  labels:
+    app.kubernetes.io/part-of: online-boutique
+    role: example
+spec:
+  groups:
+    - name: online-boutique-example.rules
+      rules:
+        - alert: PodCrashLooping
+          expr: |
+            max by (namespace, pod) (
+              kube_pod_container_status_waiting_reason{reason="CrashLoopBackOff"}
+            ) > 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Pod appears to be crash looping (example rule)."
+        - alert: DeploymentReplicasMismatch
+          expr: |
+            kube_deployment_spec_replicas
+              != kube_deployment_status_replicas_available
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Deployment replica count mismatch (example rule)."
+        - alert: PodNotReady
+          expr: |
+            sum by (namespace, pod) (
+              kube_pod_status_phase{phase=~"Pending|Unknown|Failed"}
+            ) > 0
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Pod in non-Running phase (example rule — tune for your environment)."
+        - alert: HighCPUUsage
+          expr: |
+            sum by (namespace, pod) (
+              rate(container_cpu_usage_seconds_total{container!=""}[5m])
+            ) > 0.9
+          for: 15m
+          labels:
+            severity: info
+          annotations:
+            summary: "High CPU usage (example threshold — tune for your environment)."

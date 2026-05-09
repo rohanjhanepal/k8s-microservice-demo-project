@@ -1,0 +1,32 @@
+# =============================================================================
+# EXAMPLE ONLY — DO NOT APPLY by default.
+#
+# This demonstrates how an HPA *could* scale on application metrics (e.g. RPS)
+# via the custom metrics API (often custom.metrics.k8s.io from Prometheus Adapter).
+#
+# Prerequisites:
+# - Metric exposed to Kubernetes metrics APIs (e.g. http_requests_per_second per pod)
+# - HorizontalPodAutoscaler object metrics must reference an existing series
+#
+# Your working CPU-based HPAs remain in: hpa-frontend.yaml (do not delete).
+# =============================================================================
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: frontend-custom-metrics-example
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: frontend
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+    # Example Pods metric — name must exist in the cluster metrics pipeline.
+    - type: Pods
+      pods:
+        metric:
+          name: http_requests_per_second
+        target:
+          type: AverageValue
+          averageValue: "50"

@@ -1,0 +1,12 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: checkoutservice
+  labels:
+    app: checkoutservice
+spec:
+  # Checkout may start with 1 replica; allow 1 unavailable so disruptions don't deadlock drains.
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: checkoutservice
