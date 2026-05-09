@@ -1,3 +1,17 @@
+# --- HD / submission hygiene ---
+temp/
+logs/
+*.log
+Thumbs.db
+.pytest_cache/
+__pycache__/
+*.py[cod]
+archive/temp-export/
+submission/final-zip/export-staging/
+submission/final-zip/*.zip
+*.mp4
+*.mkv
+
 .DS_Store
 .eclipse.buildship.core.prefs
 .gradle/
